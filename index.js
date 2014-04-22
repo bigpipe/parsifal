@@ -15,9 +15,12 @@ var hasOwn = Object.prototype.hasOwnProperty;
  */
 var supports = (function supports() {
   var tests = {}
-    , select = document.createElement('select')
-    , input = document.createElement('input')
-    , option = select.appendChild(document.createElement('option'));
+    , doc = document
+    , div = doc.createElement('div')
+    , select = doc.createElement('select')
+    , input = doc.createElement('input')
+    , option = select.appendChild(doc.createElement('option'))
+    , documentElement = doc && (doc.ownerDocument || doc).documentElement;
 
   //
   // Older versions of WebKit return '' instead of 'on' for checked boxes that
@@ -32,6 +35,15 @@ var supports = (function supports() {
   //
   select.disabled = true;
   tests.disabled = !option.disabled;
+
+  //
+  // Verify that getAttribute really returns attributes and not properties.
+  //
+  div.className = 'i';
+  tests.attributes = !div.getAttribute('className');
+
+  tests.xml = documentElement ? documentElement.nodeName !== "HTML" : false;
+  tests.html = !tests.xml;
 
   return tests;
 }());
@@ -76,6 +88,19 @@ function trim(value) {
 }
 
 /**
+ *
+ *
+ * @param {Element} element
+ * @returns {String} The `.value` of the element.
+ * @api private
+ */
+function attribute(element, name, val) {
+  return supports.attributes || !supports.html
+  ? element.getAttribute(name)
+  : (val = element.getAttributeNode(name)) && val.specified ? val.value : '';
+}
+
+/**
  * Get the value from a given element.
  *
  * @param {Element} element The HTML element we need to extract the value from.
@@ -109,7 +134,7 @@ function get(element) {
  */
 get.parser = {
   option: function option(element) {
-    var value = element.value;    // @TODO use attribute parser.
+    var value = attribute(element, 'value');
 
     return value === null
     ? trim(text(element))
