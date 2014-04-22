@@ -197,6 +197,7 @@ if (!supports.on) {
 //
 // Expose the methods.
 //
-exports.get = get;
-exports.trim = trim;
-exports.text = text;
+get.trim = trim;
+get.text = text;
+
+module.exports = get;
