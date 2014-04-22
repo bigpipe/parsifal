@@ -1,4 +1,11 @@
 'use strict';
+/**
+ * Cache the hasOwnProperty method.
+ *
+ * @type {Function}
+ * @private
+ */
+var hasOwn = Object.prototype.hasOwnProperty;
 
 /**
  * Detect various of bugs in browsers.
@@ -76,10 +83,16 @@ function trim(value) {
  * @api public
  */
 function get(element) {
-  var parser = get.parser[element.type] || get.parser[element.nodeName.toLowerCase()]
+  var name = element.nodeName.toLowerCase()
     , value;
 
-  if (parser && (value = parser(element)) !== undefined) return value;
+  if (get.parser[element.type] && hasOwn.call(get.parser, element.type)) {
+    value = get.parser[element.type](element);
+  } else if (get.parser[name] && hasOwn.call(get.parser, name)) {
+    value = get.parser[name](element);
+  }
+
+  if (value !== undefined) return value;
 
   value = element.value;
 
