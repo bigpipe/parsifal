@@ -1,0 +1,31 @@
+{
+  "name": "parsifal",
+  "version": "0.0.0",
+  "description": "A pure JavaScript port of jQuery's .val() method.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bigpipe/parsifal.git"
+  },
+  "keywords": [
+    "jquery",
+    "val",
+    "value",
+    "input",
+    "select",
+    "dropdown",
+    "checkbox",
+    "radio",
+    "keygen",
+    "button"
+  ],
+  "author": "Arnout Kazemier",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bigpipe/parsifal/issues"
+  },
+  "homepage": "https://github.com/bigpipe/parsifal"
+}
