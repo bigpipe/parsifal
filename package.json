@@ -4,7 +4,7 @@
   "description": "A pure JavaScript port of jQuery's .val() method.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "zuul --phantom -- test/parsifal.test.js"
   },
   "repository": {
     "type": "git",
@@ -27,5 +27,11 @@
   "bugs": {
     "url": "https://github.com/bigpipe/parsifal/issues"
   },
-  "homepage": "https://github.com/bigpipe/parsifal"
+  "homepage": "https://github.com/bigpipe/parsifal",
+  "devDependencies": {
+    "phantomjs": "^1.9.7-4",
+    "mocha": "^1.18.2",
+    "zuul": "^1.6.3",
+    "pre-commit": "0.0.7"
+  }
 }

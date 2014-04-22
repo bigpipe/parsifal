@@ -88,7 +88,7 @@ function trim(value) {
 }
 
 /**
- *
+ * Find the attribute.
  *
  * @param {Element} element
  * @returns {String} The `.value` of the element.
