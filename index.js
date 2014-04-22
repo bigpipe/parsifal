@@ -13,10 +13,18 @@ var supports = (function supports() {
     , option = select.appendChild(document.createElement('option'));
 
   //
-  // Older versions of WebKit return '' instead of 'on' for checked boxes.
+  // Older versions of WebKit return '' instead of 'on' for checked boxes that
+  // have no value specified.
   //
   input.type = 'checkbox';
   tests.on = input.value !== '';
+
+  //
+  // Make sure that options inside a disabled select are not disabled. Which is
+  // the case for WebKit.
+  //
+  select.disabled = true;
+  tests.disabled = !option.disabled;
 
   return tests;
 }());
@@ -42,9 +50,11 @@ function text(element) {
     for (element = element.firstChild; element; element = element.nextSibling) {
       value += text(element);
     }
-  } else if (3 === type || 4 === type) return element.nodeValue;
+  }
 
-  return value;
+  return 3 === type || 4 === type
+  ? element.nodeValue
+  : value;
 }
 
 /**
@@ -52,6 +62,7 @@ function text(element) {
  *
  * @param {String} value
  * @returns {String}
+ * @api public
  */
 function trim(value) {
   return ((value || '') +'').replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
@@ -71,6 +82,7 @@ function get(element) {
   if (parser && (value = parser(element)) !== undefined) return value;
 
   value = element.value;
+
   return 'string' === typeof value
   ? value.replace(/\r/g, '')
   : value === null ? '' : value;
@@ -85,15 +97,64 @@ function get(element) {
 get.parser = {
   option: function option(element) {
     var value = element.value;    // @TODO use attribute parser.
+
     return value === null
     ? trim(text(element))
     : value;
   },
 
   select: function select(element) {
+    var values = []
+      , options = element.options
+      , index = element.selectedIndex
+      , one = element.type === 'select-one' || index < 0;
 
+    for (
+      var length = one ? index + 1 : options.length
+          , i = index < 0 ? length : one ? index : 0;
+      i < length;
+      i++
+    ) {
+      var opt = options[i]
+        , value;
+
+      //
+      // IE 6-9 doesn't update the selected after a form reset. And don't return
+      // options that are disabled or have an disabled option group.
+      //
+      if (
+           (opt.selected || index === i)
+        && (
+           !supports.disabled
+           ? opt.getAttribute('disabled') === null
+           : !opt.disabled
+        )
+        && (
+           !opt.parentNode.disabled
+        || (opt.parentNode.nodeName || '').toLowerCase() !== 'optgroup'
+        )
+      ) {
+        value = get(opt);
+        if (one) return value;
+
+        values.push(value);
+      }
+    }
+
+    return values;
   }
 };
+
+//
+// Parsers that require feature detection in order to work:
+//
+if (!supports.on) {
+  get.parser.radio = get.parser.checkbox = function input(element) {
+    return element.getAttribute('value') !== null
+    ? element.value
+    : 'on';
+  };
+}
 
 //
 // Expose the methods.
