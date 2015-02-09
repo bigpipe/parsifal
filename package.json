@@ -29,9 +29,9 @@
   },
   "homepage": "https://github.com/bigpipe/parsifal",
   "devDependencies": {
-    "phantomjs": "^1.9.7-4",
-    "mocha": "^1.18.2",
-    "zuul": "^1.6.3",
-    "pre-commit": "0.0.7"
+    "phantomjs": "1.9.x",
+    "mocha": "2.1.x",
+    "zuul": "1.16.x",
+    "pre-commit": "1.0.x"
   }
 }
